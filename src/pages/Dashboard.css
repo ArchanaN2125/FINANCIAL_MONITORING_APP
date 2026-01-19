@@ -1,0 +1,40 @@
+.summary-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e0e6ed;
+}
+
+.summary-card .label {
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 5px;
+}
+
+.summary-card h5 {
+  font-weight: bold;
+}
+
+.positive {
+  color: #28a745;
+  font-size: 13px;
+}
+
+.negative {
+  color: #dc3545;
+  font-size: 13px;
+}
+
+.box-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e0e6ed;
+}
+
+.chart-placeholder {
+  height: 220px;
+  background: #f5f7fb;
+  border-radius: 8px;
+  margin-top: 10px;
+}
