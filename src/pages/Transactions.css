@@ -1,0 +1,65 @@
+.box-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e0e6ed;
+}
+
+.tx-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.tx-icon.green {
+  background: #e6f4ea;
+  color: #28a745;
+}
+
+.tx-icon.red {
+  background: #fdecea;
+  color: #dc3545;
+}
+
+.pill {
+  background: #f1f3f5;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+.status.completed {
+  background: #e6f4ea;
+  color: #28a745;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status.failed {
+  background: #fdecea;
+  color: #dc3545;
+}
+
+.positive {
+  color: #28a745;
+}
+
+.negative {
+  color: #dc3545;
+}

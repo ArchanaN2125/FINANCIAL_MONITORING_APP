@@ -1,40 +1,90 @@
-.summary-card {
+/* CARD CONTAINERS */
+.box-card {
   background: #ffffff;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 16px;
   border: 1px solid #e0e6ed;
 }
 
-.summary-card .label {
-  font-size: 12px;
-  color: #6c757d;
-  margin-bottom: 5px;
+/* TRANSACTIONS */
+.transaction-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.summary-card h5 {
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-item p {
+  margin: 0;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+/* ICONS */
+.icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
 }
 
-.positive {
-  color: #28a745;
+.icon.green {
+  background: #e6f4ea;
+  color: #16a34a;
+}
+
+.icon.red {
+  background: #fdecea;
+  color: #dc2626;
+}
+
+/* AMOUNTS */
+.amount {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.amount.positive {
+  color: #16a34a;
+}
+
+.amount.negative {
+  color: #dc2626;
+}
+
+/* VIEW ALL LINK */
+.view-all {
+  color: #2563eb;
   font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
 }
 
-.negative {
-  color: #dc3545;
-  font-size: 13px;
+/* 🔧 IMPORTANT: CHART FIXES */
+canvas {
+  opacity: 1 !important;
 }
 
-.box-card {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 16px;
-  border: 1px solid #e0e6ed;
+/* FIX LEGEND VISIBILITY */
+.chartjs-render-monitor {
+  max-height: 320px;
 }
 
-.chart-placeholder {
-  height: 220px;
-  background: #f5f7fb;
-  border-radius: 8px;
-  margin-top: 10px;
+/* Improve Doughnut Legend Look */
+.chartjs-legend li span {
+  border-radius: 50% !important;
 }

@@ -1,27 +1,57 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
-import Analytics from "./pages/Analytics";
 import Budgets from "./pages/Budgets";
-import Reports from "./pages/Reports";
+import Investments from "./pages/Investments";
+import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+
+// Auth check
+const isAuthenticated = () => {
+  return !!localStorage.getItem("token");
+};
+
+// Protected Route Wrapper
+function ProtectedLayout() {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" />;
+  }
+
+  return (
+    <div className="app-layout">
+      <Sidebar />
+      <div className="content">
+        <Routes>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/budgets" element={<Budgets />} />
+          <Route path="/investments" element={<Investments />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<Navigate to="/dashboard" />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <Sidebar />
-      <div className="content">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/transactions" element={<Transactions />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/budgets" element={<Budgets />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </div>
+      <Routes>
+
+        {/* AUTH ROUTES (NO SIDEBAR) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        {/* PROTECTED APP */}
+        <Route path="/*" element={<ProtectedLayout />} />
+
+      </Routes>
     </BrowserRouter>
   );
 }

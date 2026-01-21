@@ -1,33 +1,34 @@
-import { Link, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import "./Sidebar.css";
 
 function Sidebar() {
-  const location = useLocation();
-
-  const menu = [
-    { name: "Dashboard", path: "/" },
-    { name: "Transactions", path: "/transactions" },
-    { name: "Analytics", path: "/analytics" },
-    { name: "Budgets", path: "/budgets" },
-    { name: "Reports", path: "/reports" },
-    { name: "Settings", path: "/settings" }
-  ];
-
   return (
-    <div className="sidebar">
-      <h4 className="logo">💰 FinanceHub</h4>
+    <aside className="sidebar">
+      <div className="sidebar-header">
+        <h2>₹ FinanceHub</h2>
+        <p className="subtitle">Money Tracker</p>
+      </div>
 
-      {menu.map((item) => (
-        <Link
-          key={item.path}
-          to={item.path}
-          className={`menu-item ${
-            location.pathname === item.path ? "active" : ""
-          }`}
+      <nav className="sidebar-nav">
+        <NavLink to="/dashboard">Dashboard</NavLink>
+        <NavLink to="/transactions">Transactions</NavLink>
+        <NavLink to="/budgets">Budgets</NavLink>
+        <NavLink to="/investments">Investments</NavLink>
+        <NavLink to="/notifications">Notifications</NavLink>
+        <NavLink to="/settings">Settings</NavLink>
+      </nav>
+
+      <div className="sidebar-footer">
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }}
         >
-          {item.name}
-        </Link>
-      ))}
-    </div>
+          Logout
+        </button>
+      </div>
+    </aside>
   );
 }
 
