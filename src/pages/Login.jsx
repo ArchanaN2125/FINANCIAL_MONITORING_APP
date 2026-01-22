@@ -10,19 +10,21 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password
-      });
 
-      // store login state
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        { email, password }
+      );
+
+      // ✅ Save login session
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      navigate("/dashboard"); // ✅ enter FinanceHub
+      // ✅ Go to FinanceHub Dashboard
+      navigate("/dashboard");
     } catch (err) {
-      alert("Invalid credentials");
+      alert(err.response?.data?.message || "Invalid credentials");
     }
   };
 

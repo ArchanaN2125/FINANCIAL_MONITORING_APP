@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./Auth.css"; // SAME CSS as Login
+import "./Auth.css";
 
 function Signup() {
   const navigate = useNavigate();
@@ -27,15 +27,23 @@ function Signup() {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        password: form.password
-      });
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/signup",
+        {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+          confirmPassword: form.confirmPassword
+        }
+      );
 
-      alert("Signup successful. Please login.");
-      navigate("/login");
+      // ✅ SAVE TOKEN
+      localStorage.setItem("token", res.data.token);
+
+      // ✅ GO DIRECTLY TO FINANCE HUB
+      navigate("/dashboard");
+
     } catch (err) {
       alert(err.response?.data?.message || "Signup failed");
     }
@@ -92,7 +100,10 @@ function Signup() {
           </button>
         </form>
 
-        <button className="auth-secondary" onClick={() => navigate("/login")}>
+        <button
+          className="auth-secondary"
+          onClick={() => navigate("/login")}
+        >
           BACK TO LOGIN
         </button>
       </div>

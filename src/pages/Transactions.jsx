@@ -1,6 +1,62 @@
 import "./Transactions.css";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Transactions() {
+  const navigate = useNavigate();
+  const [transactions, setTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("All Types");
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  const fetchTransactions = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/transactions");
+      const data = await response.json();
+      setTransactions(data);
+      setFilteredTransactions(data);
+    } catch (error) {
+      console.error("Failed to fetch transactions:", error);
+    }
+  };
+
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    applyFilters(term, filterType);
+  };
+
+  const handleFilter = (e) => {
+    const type = e.target.value;
+    setFilterType(type);
+    applyFilters(searchTerm, type);
+  };
+
+  const applyFilters = (search, type) => {
+    let filtered = transactions;
+
+    if (type !== "All Types") {
+      filtered = filtered.filter(t => {
+        if (type === "Revenue") return t.type === "credit";
+        if (type === "Expense") return t.type === "debit";
+        return true;
+      });
+    }
+
+    if (search) {
+      filtered = filtered.filter(t =>
+        t.title.toLowerCase().includes(search) ||
+        t.category.toLowerCase().includes(search)
+      );
+    }
+
+    setFilteredTransactions(filtered);
+  };
+
   return (
     <div>
       {/* Header */}
@@ -12,7 +68,7 @@ function Transactions() {
 
         <div>
           <button className="btn btn-outline-secondary me-2">Export</button>
-          <button className="btn btn-primary">+ Add Transaction</button>
+          <button className="btn btn-primary" onClick={() => navigate("/transactions/add")}>+ Add Transaction</button>
         </div>
       </div>
 
@@ -24,10 +80,12 @@ function Transactions() {
               type="text"
               className="form-control"
               placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearch}
             />
           </div>
           <div className="col-md-3">
-            <select className="form-select">
+            <select className="form-select" value={filterType} onChange={handleFilter}>
               <option>All Types</option>
               <option>Revenue</option>
               <option>Expense</option>
@@ -50,110 +108,40 @@ function Transactions() {
           </thead>
 
           <tbody>
-            <TransactionRow
-              icon="green"
-              title="Client Payment - Tata Steel"
-              category="Revenue"
-              date="19 Jan 2026"
-              status="completed"
-              amount="+₹2,50,000"
-            />
-
-            <TransactionRow
-              icon="red"
-              title="Office Rent - Mumbai"
-              category="Operations"
-              date="18 Jan 2026"
-              status="completed"
-              amount="-₹85,000"
-            />
-
-            <TransactionRow
-              icon="red"
-              title="Software Subscription - Adobe"
-              category="Technology"
-              date="17 Jan 2026"
-              status="completed"
-              amount="-₹12,500"
-            />
-
-            <TransactionRow
-              icon="green"
-              title="Consulting Fee - Infosys"
-              category="Revenue"
-              date="16 Jan 2026"
-              status="pending"
-              amount="+₹1,75,000"
-            />
-
-            <TransactionRow
-              icon="red"
-              title="Employee Reimbursement - Travel"
-              category="HR"
-              date="15 Jan 2026"
-              status="completed"
-              amount="-₹8,750"
-            />
-
-            <TransactionRow
-              icon="green"
-              title="Client Retainer - Wipro"
-              category="Revenue"
-              date="14 Jan 2026"
-              status="completed"
-              amount="+₹3,50,000"
-            />
-
-            <TransactionRow
-              icon="red"
-              title="Cloud Services - AWS"
-              category="Technology"
-              date="13 Jan 2026"
-              status="completed"
-              amount="-₹45,000"
-            />
-
-            <TransactionRow
-              icon="red"
-              title="Marketing Campaign - Google Ads"
-              category="Marketing"
-              date="12 Jan 2026"
-              status="failed"
-              amount="-₹75,000"
-            />
+            {filteredTransactions.length > 0 ? (
+              filteredTransactions.map((tx, index) => (
+                <tr key={index}>
+                  <td>
+                    <div className="d-flex align-items-center gap-3">
+                      <span className={`tx-icon ${tx.type === "credit" ? "green" : "red"}`}>
+                        {tx.type === "credit" ? "↗" : "↘"}
+                      </span>
+                      <span>{tx.title}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className="pill">{tx.category}</span>
+                  </td>
+                  <td>{tx.date}</td>
+                  <td>
+                    <span className="status completed">completed</span>
+                  </td>
+                  <td className={`text-end fw-bold ${tx.type === "credit" ? "positive" : "negative"}`}>
+                    {tx.type === "credit" ? "+" : "-"}₹{tx.amount.toLocaleString()}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center text-muted py-4">
+                  No transactions found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
     </div>
-  );
-}
-
-function TransactionRow({ icon, title, category, date, status, amount }) {
-  return (
-    <tr>
-      <td>
-        <div className="d-flex align-items-center gap-3">
-          <span className={`tx-icon ${icon}`}>
-            {icon === "green" ? "↗" : "↘"}
-          </span>
-          <span>{title}</span>
-        </div>
-      </td>
-
-      <td>
-        <span className="pill">{category}</span>
-      </td>
-
-      <td>{date}</td>
-
-      <td>
-        <span className={`status ${status}`}>{status}</span>
-      </td>
-
-      <td className={`text-end fw-bold ${amount.startsWith("+") ? "positive" : "negative"}`}>
-        {amount}
-      </td>
-    </tr>
   );
 }
 

@@ -1,23 +1,23 @@
 import express from "express";
-import Transaction from "../models/Transaction.js";
+import { getTransactions, addTransaction, updateTransaction, deleteTransaction } from "../controllers/transactionController.js";
 
 const router = express.Router();
 
 // GET all transactions
-router.get("/", async (req, res) => {
-  const data = await Transaction.find().sort({ createdAt: -1 });
-  res.json(data);
-});
+router.get("/", getTransactions);
 
 // ADD transaction
-router.post("/", async (req, res) => {
-  const transaction = new Transaction(req.body);
-  await transaction.save();
-  res.json({ message: "Transaction added successfully" });
-});
+router.post("/", addTransaction);
+
+// UPDATE transaction
+router.put("/:id", updateTransaction);
+
+// DELETE transaction
+router.delete("/:id", deleteTransaction);
 
 // GENERATE report
 router.get("/report", async (req, res) => {
+  const Transaction = (await import("../models/Transaction.js")).default;
   const transactions = await Transaction.find();
   res.json({
     totalTransactions: transactions.length,

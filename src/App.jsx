@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AddTransaction from "./pages/AddTransaction";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Budgets from "./pages/Budgets";
@@ -26,6 +27,7 @@ function ProtectedLayout() {
       <Sidebar />
       <div className="content">
         <Routes>
+          <Route path="/transactions/add" element={<AddTransaction />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/budgets" element={<Budgets />} />

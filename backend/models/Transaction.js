@@ -6,7 +6,8 @@ const transactionSchema = new mongoose.Schema(
     category: String,
     amount: Number,
     type: { type: String, enum: ["credit", "debit"] },
-    date: String
+    date: String,
+    status: { type: String, enum: ["completed", "pending", "failed"], default: "completed" }
   },
   { timestamps: true }
 );

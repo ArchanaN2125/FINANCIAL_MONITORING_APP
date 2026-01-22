@@ -1,5 +1,6 @@
 import "./Dashboard.css";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,6 +26,7 @@ ChartJS.register(
 );
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [summary, setSummary] = useState([]);
   const [revenueExpenseData, setRevenueExpenseData] = useState(null);
   const [expenseDistributionData, setExpenseDistributionData] = useState(null);
@@ -90,11 +92,27 @@ function Dashboard() {
         })
       );
 
-    // TRANSACTIONS
-    fetch("http://localhost:5000/api/dashboard/recent-transactions")
+    // TRANSACTIONS - Fetch real user data
+    fetch("http://localhost:5000/api/transactions")
       .then(res => res.json())
-      .then(data => setTransactions(data));
+      .then(data => setTransactions(data.slice(0, 5))); // Show last 5 transactions
   }, []);
+
+  const handleDeleteTransaction = async (id) => {
+    if (window.confirm("Are you sure you want to delete this transaction?")) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/transactions/${id}`, {
+          method: "DELETE"
+        });
+        if (response.ok) {
+          setTransactions(transactions.filter(tx => tx._id !== id));
+          alert("Transaction deleted successfully!");
+        }
+      } catch (error) {
+        alert("Failed to delete transaction");
+      }
+    }
+  };
 
   const lineOptions = {
     responsive: true,
@@ -173,24 +191,55 @@ function Dashboard() {
           <div className="box-card">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h6 className="fw-bold">Recent Transactions</h6>
-              <span className="view-all">View All →</span>
+              <span 
+                className="view-all" 
+                style={{cursor: 'pointer'}} 
+                onClick={() => navigate("/transactions")}
+              >
+                View All →
+              </span>
             </div>
 
             <ul className="transaction-list">
-              {transactions.map((tx, i) => (
-                <li className="transaction-item" key={i}>
-                  <span className={`icon ${tx.type === "credit" ? "green" : "red"}`}>
-                    {tx.type === "credit" ? "↗" : "↘"}
-                  </span>
-                  <div>
-                    <strong>{tx.title}</strong>
-                    <p>{tx.category} • {tx.date}</p>
-                  </div>
-                  <span className={`amount ${tx.type === "credit" ? "positive" : "negative"}`}>
-                    {tx.amount}
-                  </span>
+              {transactions.length > 0 ? (
+                transactions.map((tx, i) => (
+                  <li className="transaction-item" key={tx._id || i}>
+                    <span className={`icon ${tx.type === "credit" ? "green" : "red"}`}>
+                      {tx.type === "credit" ? "↗" : "↘"}
+                    </span>
+                    <div>
+                      <strong>{tx.title}</strong>
+                      <p>{tx.category} • {tx.date}</p>
+                      <span className={`status-badge ${tx.status || "completed"}`}>
+                        {tx.status || "completed"}
+                      </span>
+                    </div>
+                    <span className={`amount ${tx.type === "credit" ? "positive" : "negative"}`}>
+                      {tx.type === "credit" ? "+" : "-"}₹{tx.amount.toLocaleString()}
+                    </span>
+                    <div className="action-buttons">
+                      <button 
+                        className="btn-icon edit" 
+                        title="Edit"
+                        onClick={() => navigate(`/transactions/edit/${tx._id}`)}
+                      >
+                        ✎
+                      </button>
+                      <button 
+                        className="btn-icon delete" 
+                        title="Delete"
+                        onClick={() => handleDeleteTransaction(tx._id)}
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li className="transaction-item">
+                  <p className="text-muted">No transactions yet</p>
                 </li>
-              ))}
+              )}
             </ul>
           </div>
         </div>
@@ -198,7 +247,10 @@ function Dashboard() {
         <div className="col-md-4">
           <div className="box-card">
             <h6 className="fw-bold">Quick Actions</h6>
-            <button className="btn btn-outline-primary w-100 mt-3">
+            <button
+              className="btn btn-outline-primary w-100 mt-3"
+              onClick={() => navigate("/transactions/add")}
+            >
               + Add Transaction
             </button>
             <button className="btn btn-outline-secondary w-100 mt-2">
